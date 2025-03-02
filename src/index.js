@@ -1,7 +1,9 @@
-const express = require('express');
-const { Pool } = require('pg');
-const bodyParser = require('body-parser');
-require('dotenv').config();
+import { express } from 'express';
+import { Pool } from 'pg';
+import bodyParser from 'body-parser';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const port = 3000;
@@ -26,19 +28,20 @@ app.get('/employees', async (req, res) => {
     }
 });
 
-app.post('/employees', async (req, res) => {
-    const { first_name, last_name, role_id, manager_id } = req.body;
-    try {
-        const result = await pool.query(
-            'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4) RETURNING *',
-            [first_name, last_name, role_id, manager_id]
-        );
-        res.status(201).json(result.rows[0]);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
-    }
- });
+// // add new employee
+// app.post('/employees', async (req, res) => {
+//     const { first_name, last_name, role_id, manager_id } = req.body;
+//     try {
+//         const result = await pool.query(
+//             'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4) RETURNING *',
+//             [first_name, last_name, role_id, manager_id]
+//         );
+//         res.status(201).json(result.rows[0]);
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).send('Server Error');
+//     }
+//  });
 
  app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
