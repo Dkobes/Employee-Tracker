@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { getEmployees, addEmployee } from './db.js';
+import { getEmployees, addEmployee } from './queries.js';
 
 const router = express.Router();
 
