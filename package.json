@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "type": "module",
   "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "inquirer": "^12.4.2",
-    "pg": "^8.13.3"
+    "pg": "^8.13.3",
+    "pool": "^0.4.1"
   },
   "scripts": {
     "start": "node src/index.js",
