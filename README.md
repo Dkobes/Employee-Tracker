@@ -19,7 +19,7 @@
 
 
 ## Credits
-Collaborated with another student when debugging errors. Using Google for solutions to certain errors that were not known right off the bat
+Collaborated with another student when debugging errors. Xpert Learning AI
 
 ## License
 N/A
