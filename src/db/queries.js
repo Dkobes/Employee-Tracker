@@ -1,4 +1,4 @@
-import pool from '../db/database';
+import pool from './database.js';
 import inquirer from 'inquirer';
 
 class connectToDatabase {

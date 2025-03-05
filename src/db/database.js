@@ -21,4 +21,5 @@ const connectToDatabase = async () => {
     }
 }; 
 
-export { pool, connectToDatabase };
+connectToDatabase();
+export default pool;

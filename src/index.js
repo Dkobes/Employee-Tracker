@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import db from '../../menu/queries';
+import db from './db/queries.js';
 
 async function mainMenu() {
     const { action } = await inquirer.prompt([
