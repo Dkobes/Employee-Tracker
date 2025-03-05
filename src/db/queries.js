@@ -10,7 +10,7 @@ class connectToDatabase {
             return array;
         } catch (error) {
             console.error("There was a problem querying the database:", error);
-            process.exit(1);
+            return [];
         }
     }
 

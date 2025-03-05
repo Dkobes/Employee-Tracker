@@ -1,5 +1,8 @@
 import inquirer from 'inquirer';
 import db from './db/queries.js';
+import { connectToDatabase } from './db/database.js';
+
+await connectToDatabase();
 
 async function mainMenu() {
     const { action } = await inquirer.prompt([
@@ -8,11 +11,11 @@ async function mainMenu() {
             name: 'action',
             message: 'What would you like to do?',
             choices: [
-                'View Departments',
+                'View Department',
                 'Add Department',
                 'View Roles',
                 'Add Role',
-                'View Employees',
+                'View Employee',
                 'Add Employee',
                 'Update Employee Role',
                 'Delete Department',
@@ -59,14 +62,14 @@ async function mainMenu() {
                 { type: 'input', name: 'firstName', message: 'Enter first name:' },
                 { type: 'input', name: 'lastName', message: 'Enter last name:' },
                 { type: 'list', name: 'role', message: 'Select role:', choices: await db.findRoles() },
-                { type: 'list', name: 'manager', message: 'Select manager:', choices: await db.findEmployees() }
+                { type: 'list', name: 'manager', message: 'Select manager:', choices: await db.findEmployee() }
             ]);
             await db.addEmployee(employeeAnswers);
             console.log('Employee added successfully.');
             break;
         case 'Update Employee Role':
             const updateAnswers = await inquirer.prompt([
-                { type: 'list', name: 'employee', message: 'Select employee:', choices: await db.findEmployees() },
+                { type: 'list', name: 'employee', message: 'Select employee:', choices: await db.findEmployee() },
                 { type: 'list', name: 'role', message: 'Select new role:', choices: await db.findRoles() }
             ]);
             await db.updateEmployeeRole(updateAnswers);
@@ -74,7 +77,7 @@ async function mainMenu() {
             break;
         case 'Delete Department':
             const { department } = await inquirer.prompt([
-                { type: 'list', name: 'department', message: 'Select department to delete:', choices: await db.findDepartments() }
+                { type: 'list', name: 'department', message: 'Select department to delete:', choices: await db.findDepartment() }
             ]);
             await db.deleteDepartment(department);
             console.log('Department deleted successfully.');
@@ -88,7 +91,7 @@ async function mainMenu() {
             break;
         case 'Delete Employee':
             const { employee } = await inquirer.prompt([
-                { type: 'list', name: 'employee', message: 'Select employee to delete:', choices: await db.findEmployees() }
+                { type: 'list', name: 'employee', message: 'Select employee to delete:', choices: await db.findEmployee() }
             ]);
             await db.deleteEmployee(employee);
             console.log('Employee deleted successfully.');
@@ -98,9 +101,7 @@ async function mainMenu() {
             process.exit(0);
     }
 
-    // Loop back to the main menu
+    
     mainMenu();
 }
-
-// Start the application
 mainMenu();
