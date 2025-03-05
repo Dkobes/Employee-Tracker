@@ -24,8 +24,8 @@ async function mainMenu() {
     ]);
 
    switch (action) {
-        case 'View Departments':
-            console.table(await db.viewDepartments());
+        case 'View Department':
+            console.table(await db.viewDepartment());
             break;
         case 'Add Department':
             const { departmentName } = await inquirer.prompt([
@@ -45,14 +45,14 @@ async function mainMenu() {
                     type: 'list',
                     name: 'department',
                     message: 'Select department:',
-                    choices: await db.findDepartments()
+                    choices: await db.findDepartment()
                 }
             ]);
             await db.addRole(roleAnswers);
             console.log('Role added successfully.');
             break;
-        case 'View Employees':
-            console.table(await db.viewEmployees());
+        case 'View Employee':
+            console.table(await db.viewEmployee());
             break;
         case 'Add Employee':
             const employeeAnswers = await inquirer.prompt([

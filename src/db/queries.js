@@ -14,11 +14,11 @@ class connectToDatabase {
         }
     }
 
-    findDepartments() {
+    findDepartment() {
         return this.query('SELECT name, id AS value FROM department ORDER BY name;')
     }
 
-    viewDepartments() {
+    viewDepartment() {
         return this.query('SELECT * FROM department ORDER BY name;');
     }
 
@@ -30,11 +30,11 @@ class connectToDatabase {
         return this.query('SELECT r.id, title, name AS department, salary FROM role r INNER JOIN department d on d.id = r.department_id ORDER BY id;');
     }
 
-    findEmployees() {
+    findEmployee() {
         return this.query(`SELECT CONCAT(first_name, ' ', last_name) AS name, id AS value FROM employee;`);
     }
 
-    viewEmployees() {
+    viewEmployee() {
         return this.query(`SELECT e.id, e.first_name, e.last_name, r.title, d.name AS department, r.salary, CONCAT(m.first_name, ' ', m.last_name) AS manager FROM employee e LEFT JOIN role r on e.role_id = r.id
             LEFT JOIN department d on r.department_id = d.id LEFT JOIN employee m on e.manager_id = m.id ORDER BY e.id;`);
     }
