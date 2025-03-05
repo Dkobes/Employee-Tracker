@@ -1,137 +1,106 @@
 import inquirer from 'inquirer';
-import { getDepartments, getRoles, getEmployees, addDepartment, addRole, addEmployee, updateEmployeeRole } from './queries.js';
+import db from '../../menu/queries';
 
-const mainMenu = async () => {
-   const menuChoices = [
-      'View All Departments',
-      'View All Roles',
-      'View All Employees',
-      'Add a Department',
-      'Add a Role',
-      'Add an Employee',
-      'Update an Employee Role',
-      'Quit',
-   ];
+async function mainMenu() {
+    const { action } = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'action',
+            message: 'What would you like to do?',
+            choices: [
+                'View Departments',
+                'Add Department',
+                'View Roles',
+                'Add Role',
+                'View Employees',
+                'Add Employee',
+                'Update Employee Role',
+                'Delete Department',
+                'Delete Role',
+                'Delete Employee',
+                'Exit'
+            ]
+        }
+    ]);
 
-   const { choice } = await inquirer.prompt([
-      {
-         type: 'list',
-         name: 'choice',
-         message: 'What would you like to do?',
-         choices: menuChoices
-      }
-   ]);
-
-   switch (choice) {
-      case 'View All Departments':
-          const departments = await getDepartments();
-          console.log('Departments:', departments);
-          break;
-
-      case 'View All Roles':
-          const roles = await getRoles();
-          console.log('Roles:', roles);
-          break;
-
-      case 'View All Employees':
-          const employees = await getEmployees();
-          console.log('Employees:', employees);
-          break;
-
-      case 'Add a Department':
-          const { departmentName } = await inquirer.prompt([
-              {
-                  type: 'input',
-                  name: 'departmentName',
-                  message: 'Enter the name of the department:',
-                  validate: input => input ? true : 'Department name is required.'
-              }
-          ]);
-          await addDepartment(departmentName);
-          console.log(`Department "${departmentName}" added.`);
-          break;
-
-          case 'Add a Role':
-            const roleDetails = await inquirer.prompt([
+   switch (action) {
+        case 'View Departments':
+            console.table(await db.viewDepartments());
+            break;
+        case 'Add Department':
+            const { departmentName } = await inquirer.prompt([
+                { type: 'input', name: 'departmentName', message: 'Enter department name:' }
+            ]);
+            await db.addDepartment(departmentName);
+            console.log('Department added successfully.');
+            break;
+        case 'View Roles':
+            console.table(await db.viewRoles());
+            break;
+        case 'Add Role':
+            const roleAnswers = await inquirer.prompt([
+                { type: 'input', name: 'title', message: 'Enter role title:' },
+                { type: 'input', name: 'salary', message: 'Enter role salary:' },
                 {
-                    type: 'input',
-                    name: 'roleTitle',
-                    message: 'Enter the title of the role:',
-                    validate: input => input ? true : 'Role title is required.'
-                },
-                {
-                    type: 'input',
-                    name: 'roleSalary',
-                    message: 'Enter the salary for the role:',
-                    validate: input => !isNaN(input) ? true : 'Salary must be a number.'
-                },
-                {
-                    type: 'input',
-                    name: 'departmentId',
-                    message: 'Enter the department ID for this role:',
-                    validate: input => !isNaN(input) ? true : 'Department ID must be a number.'
+                    type: 'list',
+                    name: 'department',
+                    message: 'Select department:',
+                    choices: await db.findDepartments()
                 }
             ]);
-            await addRole(roleDetails.roleTitle, roleDetails.roleSalary, roleDetails.departmentId);
-            console.log(`Role "${roleDetails.roleTitle}" added.`);
+            await db.addRole(roleAnswers);
+            console.log('Role added successfully.');
             break;
-
-            case 'Add an Employee':
-            const employeeDetails = await inquirer.prompt([
-                {
-                    type: 'input',
-                    name: 'firstName',
-                    message: 'Enter the employee\'s first name:',
-                    validate: input => input ? true : 'First name is required.'
-                },
-                {
-                    type: 'input',
-                    name: 'lastName',
-                    message: 'Enter the employee\'s last name:',
-                    validate: input => input ? true : 'Last name is required.'
-                },
-                {
-                    type: 'input',
-                    name: 'roleId',
-                    message: 'Enter the employee\'s role ID:',
-                    validate: input => !isNaN(input) ? true : 'Role ID must be a number.'
-                },
-                {
-                    type: 'input',
-                    name: 'managerId',
-                    message: 'Enter the employee\'s manager ID (leave blank if none):',
-                    validate: input => input === '' || !isNaN(input) ? true : 'Manager ID must be a number or left blank.'
-                }
+        case 'View Employees':
+            console.table(await db.viewEmployees());
+            break;
+        case 'Add Employee':
+            const employeeAnswers = await inquirer.prompt([
+                { type: 'input', name: 'firstName', message: 'Enter first name:' },
+                { type: 'input', name: 'lastName', message: 'Enter last name:' },
+                { type: 'list', name: 'role', message: 'Select role:', choices: await db.findRoles() },
+                { type: 'list', name: 'manager', message: 'Select manager:', choices: await db.findEmployees() }
             ]);
-            await addEmployee(employeeDetails.firstName, employeeDetails.lastName, employeeDetails.roleId, employeeDetails.managerId || null);
-            console.log(`Employee "${employeeDetails.firstName} ${employeeDetails.lastName}" added.`);
+            await db.addEmployee(employeeAnswers);
+            console.log('Employee added successfully.');
             break;
-
-        case 'Update an Employee Role':
-            const { employeeId, newRoleId } = await inquirer.prompt([
-                {
-                    type: 'input',
-                    name: 'employeeId',
-                    message: 'Enter the employee ID to update:',
-                    validate: input => !isNaN(input) ? true : 'Employee ID must be a number.'
-                },
-                {
-                    type: 'input',
-                    name: 'newRoleId',
-                    message: 'Enter the new role ID for this employee:',
-                    validate: input => !isNaN(input) ? true : 'New Role ID must be a number.'
-                }
+        case 'Update Employee Role':
+            const updateAnswers = await inquirer.prompt([
+                { type: 'list', name: 'employee', message: 'Select employee:', choices: await db.findEmployees() },
+                { type: 'list', name: 'role', message: 'Select new role:', choices: await db.findRoles() }
             ]);
-            await updateEmployeeRole(employeeId, newRoleId);
-            console.log(`Employee ID ${employeeId} role updated to Role ID ${newRoleId}.`);
+            await db.updateEmployeeRole(updateAnswers);
+            console.log('Employee role updated successfully.');
             break;
-
-        case 'Quit':
+        case 'Delete Department':
+            const { department } = await inquirer.prompt([
+                { type: 'list', name: 'department', message: 'Select department to delete:', choices: await db.findDepartments() }
+            ]);
+            await db.deleteDepartment(department);
+            console.log('Department deleted successfully.');
+            break;
+        case 'Delete Role':
+            const { role } = await inquirer.prompt([
+                { type: 'list', name: 'role', message: 'Select role to delete:', choices: await db.findRoles() }
+            ]);
+            await db.deleteRole(role);
+            console.log('Role deleted successfully.');
+            break;
+        case 'Delete Employee':
+            const { employee } = await inquirer.prompt([
+                { type: 'list', name: 'employee', message: 'Select employee to delete:', choices: await db.findEmployees() }
+            ]);
+            await db.deleteEmployee(employee);
+            console.log('Employee deleted successfully.');
+            break;
+        case 'Exit':
             console.log('Goodbye!');
-            return;
+            process.exit(0);
     }
 
-    await mainMenu();
-};
+    // Loop back to the main menu
+    mainMenu();
+}
 
+// Start the application
 mainMenu();
