@@ -10,13 +10,14 @@
 7. [Badges] (#badges)
 
 ## Description
-
+A database to allow user to view different departments and employees from each area. Allows user to update information or even delete out employees and departments.
 
 ## Usage
-
+Here is a screen recorded video of how to use the following program
+https://drive.google.com/file/d/1FibZzcu61xz-7C68eD4LUqjPQ63UssHX/view
 
 ## Installation
-
+node src/index.js
 
 ## Credits
 Collaborated with another student when debugging errors. Xpert Learning AI
@@ -25,7 +26,7 @@ Collaborated with another student when debugging errors. Xpert Learning AI
 N/A
 
 ## Features
-
+N/A
 
 ## Badges
 N/A
